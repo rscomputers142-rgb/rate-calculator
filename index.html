@@ -176,7 +176,7 @@
                 <!-- PROJECT ESTIMATOR SCOPE -->
                 <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl">
                     <h2 class="text-lg font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-4">
-                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 022 2h2a2 2 0 022-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
                         3. Quick Project Scope Estimator
                     </h2>
 
@@ -263,16 +263,22 @@
                     </div>
 
                 </div>
-                <button onclick="window.open('https://araplhn.org/4/1cf433119a7ac7fb93b8842b4891bf06', '_blank');">
-  Calculate My Rates
-</button>
+
+                <button id="calcBtn" class="w-full py-4 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold text-center transition-all shadow-lg shadow-indigo-600/25">
+                    Calculate My Rates
+                </button>
             </section>
 
         </main>
 
         <!-- Footer -->
-        <footer class="mt-12 text-center text-xs text-slate-500">
+        <footer class="mt-12 text-center text-xs text-slate-500 space-y-3">
             <p>Built with HTML, Tailwind CSS, and Vanilla JavaScript.</p>
+            <p>
+                <a href="https://araplhn.org/4/1cf433119a7ac7fb93b8842b4891bf06" target="_blank" rel="noopener noreferrer" class="text-indigo-400 hover:text-indigo-300 underline transition-colors">
+                    Check out special offers
+                </a>
+            </p>
         </footer>
 
     </div>
@@ -347,8 +353,6 @@
                 const monthlyBillableHours = annualBillableHours / 12;
 
                 // 2. Calculate Financial Needs (Grossing Up)
-                // NetTarget = (Gross - Expenses) * (1 - TaxRate) / (1 + ProfitMargin)
-                // Gross Monthly required calculation:
                 const targetWithProfit = targetNetMonthly * (1 + profitMargin);
                 const taxableNeeded = taxRate < 1 ? targetWithProfit / (1 - taxRate) : targetWithProfit;
                 const grossMonthlyRequired = taxableNeeded + monthlyExpenses;
@@ -384,11 +388,15 @@
                 input.addEventListener('change', calculateRates);
             });
 
+            // Calculate button listener
+            const calcBtn = document.getElementById('calcBtn');
+            if (calcBtn) {
+                calcBtn.addEventListener('click', calculateRates);
+            }
+
             // Initial calculation run on page load
             calculateRates();
         });
-        
     </script>
-    
 </body>
 </html>
