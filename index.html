@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en" class="dark h-full bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freelance Rate & Project Cost Estimator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            accent: '#6366f1',
+                            accentGlow: '#818cf8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        /* Custom sleek glassmorphism & slider styling */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card-glow {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            box-shadow: 0 0 30px -5px rgba(99, 102, 241, 0.15);
+        }
+        input[type=range] {
+            accent-color: #6366f1;
+        }
+        /* Hide spin buttons for crisp number inputs */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="h-full text-slate-100 antialiased selection:bg-indigo-500 selection:text-white relative overflow-x-hidden">
+
+    <!-- Subtle Ambient Background Glows -->
+    <div class="fixed top-0 left-1/4 -translate-x-1/2 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="fixed bottom-0 right-1/4 translate-x-1/2 w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <div class="min-h-screen flex flex-col justify-between py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative z-10">
+        
+        <!-- Header -->
+        <header class="text-center max-w-2xl mx-auto mb-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-4">
+                <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> Dynamic Rate Calculator
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-indigo-200">
+                Freelance Rate & Project Cost Estimator
+            </h1>
+            <p class="mt-3 text-slate-400 text-sm sm:text-base">
+                Set your income goals, account for business overheads and non-billable time, and generate accurate pricing instantly.
+            </p>
+        </header>
+
+        <!-- Main Layout: 2 Columns -->
+        <main class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- LEFT PANEL: Inputs (7 Cols) -->
+            <section class="lg:col-span-7 space-y-6">
+                
+                <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl">
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-4">
+                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        1. Income & Time Parameters
+                    </h2>
+
+                    <!-- Target Monthly Income -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label for="monthlyIncome" class="text-xs sm:text-sm font-medium text-slate-300">Target Take-Home Income (Monthly)</label>
+                            <span class="text-xs text-slate-400">Post-tax target</span>
+                        </div>
+                        <div class="relative rounded-xl shadow-sm">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                                <span class="text-slate-400 font-semibold">$</span>
+                            </div>
+                            <input type="number" id="monthlyIncome" value="6500" min="0" step="100" class="w-full rounded-xl bg-slate-900/80 border border-slate-700/80 pl-8 pr-4 py-3 text-white font-semibold focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Work Hours Per Week & Billable Ratio -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="weeklyHours" class="block text-xs sm:text-sm font-medium text-slate-300 mb-2">Working Hours / Week</label>
+                            <input type="number" id="weeklyHours" value="40" min="1" max="100" class="w-full rounded-xl bg-slate-900/80 border border-slate-700/80 px-4 py-3 text-white font-semibold focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all outline-none">
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label for="billablePercent" class="text-xs sm:text-sm font-medium text-slate-300">Billable Time %</label>
+                                <span id="billablePercentVal" class="text-xs font-bold text-indigo-400">75%</span>
+                            </div>
+                            <input type="range" id="billablePercent" min="30" max="100" value="75" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer mt-3">
+                            <p class="text-[11px] text-slate-500 mt-1">Excludes admin, sales, and marketing hours.</p>
+                        </div>
+                    </div>
+
+                    <!-- Vacation Weeks -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label for="vacationWeeks" class="text-xs sm:text-sm font-medium text-slate-300">Vacation / Time-Off</label>
+                            <span id="vacationWeeksVal" class="text-xs font-bold text-slate-300">4 Weeks/Year</span>
+                        </div>
+                        <input type="range" id="vacationWeeks" min="0" max="12" value="4" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                </div>
+
+                <!-- OVERHEADS & MARGINS -->
+                <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl">
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-4">
+                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        2. Expenses, Taxes & Profit Buffer
+                    </h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Software & Monthly Overhead -->
+                        <div>
+                            <label for="softwareExpenses" class="block text-xs sm:text-sm font-medium text-slate-300 mb-2">Software & Subscriptions ($/mo)</label>
+                            <div class="relative rounded-xl shadow-sm">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                                    <span class="text-slate-400 font-semibold">$</span>
+                                </div>
+                                <input type="number" id="softwareExpenses" value="450" min="0" step="25" class="w-full rounded-xl bg-slate-900/80 border border-slate-700/80 pl-8 pr-4 py-3 text-white font-semibold focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all outline-none">
+                            </div>
+                        </div>
+
+                        <!-- Tax Allowance -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label for="taxRate" class="text-xs sm:text-sm font-medium text-slate-300">Estimated Tax Rate</label>
+                                <span id="taxRateVal" class="text-xs font-bold text-indigo-400">25%</span>
+                            </div>
+                            <input type="range" id="taxRate" min="0" max="50" value="25" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer mt-3">
+                        </div>
+                    </div>
+
+                    <!-- Profit Margin -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label for="profitMargin" class="text-xs sm:text-sm font-medium text-slate-300">Profit Margin Buffer</label>
+                            <span id="profitMarginVal" class="text-xs font-bold text-emerald-400">15%</span>
+                        </div>
+                        <input type="range" id="profitMargin" min="0" max="50" value="15" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer">
+                        <p class="text-[11px] text-slate-500 mt-1">Added buffer for business growth, emergency fund, and equipment reinvestment.</p>
+                    </div>
+                </div>
+
+                <!-- PROJECT ESTIMATOR SCOPE -->
+                <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl">
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-4">
+                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                        3. Quick Project Scope Estimator
+                    </h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="projectHours" class="block text-xs sm:text-sm font-medium text-slate-300 mb-2">Estimated Project Hours</label>
+                            <input type="number" id="projectHours" value="35" min="1" step="1" class="w-full rounded-xl bg-slate-900/80 border border-slate-700/80 px-4 py-3 text-white font-semibold focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all outline-none">
+                        </div>
+                        <div>
+                            <label for="complexityBuffer" class="block text-xs sm:text-sm font-medium text-slate-300 mb-2">Scope Buffer / Risk Factor</label>
+                            <select id="complexityBuffer" class="w-full rounded-xl bg-slate-900/80 border border-slate-700/80 px-4 py-3 text-white font-semibold focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all outline-none">
+                                <option value="1.0">Standard (+0% buffer)</option>
+                                <option value="1.15" selected>Moderate Complexity (+15%)</option>
+                                <option value="1.3">High Complexity / Rush (+30%)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- RIGHT PANEL: Real-time Output Dashboard (5 Cols) -->
+            <section class="lg:col-span-5 lg:sticky lg:top-8 space-y-6">
+                
+                <!-- Main Glass Display Card -->
+                <div class="glass-card-glow rounded-3xl p-6 sm:p-8 space-y-8 relative overflow-hidden">
+                    
+                    <!-- Top Badge -->
+                    <div class="flex justify-between items-center border-b border-slate-800/80 pb-4">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Target Hourly Rate</span>
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Recommended Minimum</span>
+                    </div>
+
+                    <!-- Minimum Hourly Rate Hero Display -->
+                    <div class="text-center py-2">
+                        <div class="text-5xl sm:text-6xl font-black text-white tracking-tight flex items-baseline justify-center gap-1">
+                            <span class="text-indigo-400 text-3xl sm:text-4xl font-bold">$</span>
+                            <span id="outputHourlyRate">0</span>
+                            <span class="text-slate-500 text-lg font-normal">/hr</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-2">Covers salary, taxes, software, & profit margin.</p>
+                    </div>
+
+                    <!-- Output Grid: Daily & Monthly Gross -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
+                            <span class="text-xs text-slate-400 block mb-1">Day Rate (8h)</span>
+                            <span class="text-xl font-bold text-white" id="outputDailyRate">$0</span>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
+                            <span class="text-xs text-slate-400 block mb-1">Gross Required / Mo</span>
+                            <span class="text-xl font-bold text-indigo-300" id="outputGrossMonthly">$0</span>
+                        </div>
+                    </div>
+
+                    <!-- Calculated Project Cost Box -->
+                    <div class="p-5 rounded-2xl bg-gradient-to-br from-indigo-950/80 to-slate-900/90 border border-indigo-500/30 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-semibold text-indigo-300 uppercase tracking-wider">Estimated Project Price</span>
+                            <span id="effectiveHoursBadge" class="text-[11px] font-bold text-slate-400">40.25 billable hrs</span>
+                        </div>
+                        <div class="text-3xl font-extrabold text-white" id="outputProjectCost">$0</div>
+                        <p class="text-xs text-slate-400">Suggested flat-rate quote incorporating your chosen scope risk factor.</p>
+                    </div>
+
+                    <!-- Dynamic Breakdown List -->
+                    <div class="space-y-3 pt-2 text-xs border-t border-slate-800/80">
+                        <div class="flex justify-between text-slate-400">
+                            <span>Annual Billable Target</span>
+                            <span class="text-slate-200 font-semibold" id="outputAnnualBillableHours">0 hrs</span>
+                        </div>
+                        <div class="flex justify-between text-slate-400">
+                            <span>Monthly Software & Overheads</span>
+                            <span class="text-slate-200 font-semibold" id="outputBreakdownExpenses">$0</span>
+                        </div>
+                        <div class="flex justify-between text-slate-400">
+                            <span>Monthly Tax Allocation</span>
+                            <span class="text-slate-200 font-semibold" id="outputBreakdownTaxes">$0</span>
+                        </div>
+                        <div class="flex justify-between text-slate-400">
+                            <span>Monthly Net Profit Buffer</span>
+                            <span class="text-emerald-400 font-semibold" id="outputBreakdownProfit">$0</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-xs text-slate-500">
+            <p>Built with HTML, Tailwind CSS, and Vanilla JavaScript.</p>
+        </footer>
+
+    </div>
+
+    <!-- CALCULATION LOGIC ENGINE -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Element References
+            const inputs = {
+                monthlyIncome: document.getElementById('monthlyIncome'),
+                weeklyHours: document.getElementById('weeklyHours'),
+                billablePercent: document.getElementById('billablePercent'),
+                vacationWeeks: document.getElementById('vacationWeeks'),
+                softwareExpenses: document.getElementById('softwareExpenses'),
+                taxRate: document.getElementById('taxRate'),
+                profitMargin: document.getElementById('profitMargin'),
+                projectHours: document.getElementById('projectHours'),
+                complexityBuffer: document.getElementById('complexityBuffer')
+            };
+
+            const displays = {
+                billablePercentVal: document.getElementById('billablePercentVal'),
+                vacationWeeksVal: document.getElementById('vacationWeeksVal'),
+                taxRateVal: document.getElementById('taxRateVal'),
+                profitMarginVal: document.getElementById('profitMarginVal'),
+                
+                outputHourlyRate: document.getElementById('outputHourlyRate'),
+                outputDailyRate: document.getElementById('outputDailyRate'),
+                outputGrossMonthly: document.getElementById('outputGrossMonthly'),
+                outputProjectCost: document.getElementById('outputProjectCost'),
+                effectiveHoursBadge: document.getElementById('effectiveHoursBadge'),
+                
+                outputAnnualBillableHours: document.getElementById('outputAnnualBillableHours'),
+                outputBreakdownExpenses: document.getElementById('outputBreakdownExpenses'),
+                outputBreakdownTaxes: document.getElementById('outputBreakdownTaxes'),
+                outputBreakdownProfit: document.getElementById('outputBreakdownProfit')
+            };
+
+            // Currency Formatter Utility
+            const formatCurrency = (val) => {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    maximumFractionDigits: 0
+                }).format(val);
+            };
+
+            // Main Calculation Engine
+            function calculateRates() {
+                // Get values
+                const targetNetMonthly = parseFloat(inputs.monthlyIncome.value) || 0;
+                const hrsPerWeek = parseFloat(inputs.weeklyHours.value) || 0;
+                const billableRatio = (parseFloat(inputs.billablePercent.value) || 0) / 100;
+                const vacationWeeks = parseFloat(inputs.vacationWeeks.value) || 0;
+                const monthlyExpenses = parseFloat(inputs.softwareExpenses.value) || 0;
+                const taxRate = (parseFloat(inputs.taxRate.value) || 0) / 100;
+                const profitMargin = (parseFloat(inputs.profitMargin.value) || 0) / 100;
+
+                const projHours = parseFloat(inputs.projectHours.value) || 0;
+                const riskMultiplier = parseFloat(inputs.complexityBuffer.value) || 1.0;
+
+                // Update UI slider dynamic labels
+                displays.billablePercentVal.textContent = `${inputs.billablePercent.value}%`;
+                displays.vacationWeeksVal.textContent = `${inputs.vacationWeeks.value} Weeks/Year`;
+                displays.taxRateVal.textContent = `${inputs.taxRate.value}%`;
+                displays.profitMarginVal.textContent = `${inputs.profitMargin.value}%`;
+
+                // 1. Calculate Time Base
+                const workingWeeks = Math.max(1, 52 - vacationWeeks);
+                const totalWorkingHoursPerYear = workingWeeks * hrsPerWeek;
+                const annualBillableHours = totalWorkingHoursPerYear * billableRatio;
+                const monthlyBillableHours = annualBillableHours / 12;
+
+                // 2. Calculate Financial Needs (Grossing Up)
+                // NetTarget = (Gross - Expenses) * (1 - TaxRate) / (1 + ProfitMargin)
+                // Gross Monthly required calculation:
+                const targetWithProfit = targetNetMonthly * (1 + profitMargin);
+                const taxableNeeded = taxRate < 1 ? targetWithProfit / (1 - taxRate) : targetWithProfit;
+                const grossMonthlyRequired = taxableNeeded + monthlyExpenses;
+
+                // Monthly specific breakdown items
+                const monthlyTaxAllocation = taxableNeeded - targetWithProfit;
+                const monthlyProfitBuffer = targetNetMonthly * profitMargin;
+
+                // 3. Compute Rates
+                const hourlyRate = monthlyBillableHours > 0 ? grossMonthlyRequired / monthlyBillableHours : 0;
+                const dailyRate = hourlyRate * 8; // Standard 8-hour day
+
+                // 4. Project Estimator Calculations
+                const adjustedProjectHours = projHours * riskMultiplier;
+                const projectCost = adjustedProjectHours * hourlyRate;
+
+                // Render Results
+                displays.outputHourlyRate.textContent = Math.ceil(hourlyRate);
+                displays.outputDailyRate.textContent = formatCurrency(dailyRate);
+                displays.outputGrossMonthly.textContent = formatCurrency(grossMonthlyRequired);
+                displays.outputProjectCost.textContent = formatCurrency(projectCost);
+                displays.effectiveHoursBadge.textContent = `${adjustedProjectHours.toFixed(1)} billable hrs`;
+
+                displays.outputAnnualBillableHours.textContent = `${Math.round(annualBillableHours)} hrs`;
+                displays.outputBreakdownExpenses.textContent = formatCurrency(monthlyExpenses);
+                displays.outputBreakdownTaxes.textContent = formatCurrency(monthlyTaxAllocation);
+                displays.outputBreakdownProfit.textContent = formatCurrency(monthlyProfitBuffer);
+            }
+
+            // Attach Event Listeners to all controls
+            Object.values(inputs).forEach(input => {
+                input.addEventListener('input', calculateRates);
+                input.addEventListener('change', calculateRates);
+            });
+
+            // Initial calculation run on page load
+            calculateRates();
+        });
+    </script>
+</body>
+</html>
