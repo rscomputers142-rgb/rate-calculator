@@ -66,6 +66,28 @@
     <div class="fixed top-0 left-1/4 -translate-x-1/2 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
     <div class="fixed bottom-0 right-1/4 translate-x-1/2 w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[120px] pointer-events-none"></div>
 
+    <!-- Recurring Ad Popup Modal Overlay -->
+    <div id="adModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 transition-all">
+        <div class="glass-card-glow max-w-md w-full rounded-3xl p-6 sm:p-8 text-center space-y-6 relative border border-indigo-500/40 shadow-2xl">
+            <button id="closeAdBtn" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800/80 hover:bg-slate-700 rounded-full p-2 transition-all outline-none">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            
+            <div class="w-12 h-12 bg-indigo-500/10 border border-indigo-500/30 rounded-2xl flex items-center justify-center mx-auto text-indigo-400">
+                <svg class="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </div>
+
+            <div class="space-y-2">
+                <h3 class="text-xl font-bold text-white">Exclusive Offer Available</h3>
+                <p class="text-xs text-slate-300">Click below to check out special rates, discounts, and sponsor resources.</p>
+            </div>
+
+            <a id="adModalLink" href="https://araplhn.org/4/1cf433119a7ac7fb93b8842b4891bf06" target="_blank" rel="noopener noreferrer" class="block w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-indigo-500 to-emerald-500 hover:from-indigo-600 hover:to-emerald-600 text-white font-bold text-sm shadow-lg shadow-indigo-500/20 transition-all">
+                View Special Offer &rarr;
+            </a>
+        </div>
+    </div>
+
     <div class="min-h-screen flex flex-col justify-between py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative z-10">
         
         <!-- Header -->
@@ -283,10 +305,17 @@
 
     </div>
 
-    <!-- CALCULATION LOGIC ENGINE -->
+    <!-- CALCULATION LOGIC ENGINE & RECURRING AD HANDLER -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Element References
+            const smartlinkUrl = "https://araplhn.org/4/1cf433119a7ac7fb93b8842b4891bf06";
+            
+            // Modal Elements
+            const adModal = document.getElementById('adModal');
+            const closeAdBtn = document.getElementById('closeAdBtn');
+            const adModalLink = document.getElementById('adModalLink');
+
+            // Form Inputs & Displays
             const inputs = {
                 monthlyIncome: document.getElementById('monthlyIncome'),
                 weeklyHours: document.getElementById('weeklyHours'),
@@ -328,7 +357,6 @@
 
             // Main Calculation Engine
             function calculateRates() {
-                // Get values
                 const targetNetMonthly = parseFloat(inputs.monthlyIncome.value) || 0;
                 const hrsPerWeek = parseFloat(inputs.weeklyHours.value) || 0;
                 const billableRatio = (parseFloat(inputs.billablePercent.value) || 0) / 100;
@@ -340,36 +368,29 @@
                 const projHours = parseFloat(inputs.projectHours.value) || 0;
                 const riskMultiplier = parseFloat(inputs.complexityBuffer.value) || 1.0;
 
-                // Update UI slider dynamic labels
                 displays.billablePercentVal.textContent = `${inputs.billablePercent.value}%`;
                 displays.vacationWeeksVal.textContent = `${inputs.vacationWeeks.value} Weeks/Year`;
                 displays.taxRateVal.textContent = `${inputs.taxRate.value}%`;
                 displays.profitMarginVal.textContent = `${inputs.profitMargin.value}%`;
 
-                // 1. Calculate Time Base
                 const workingWeeks = Math.max(1, 52 - vacationWeeks);
                 const totalWorkingHoursPerYear = workingWeeks * hrsPerWeek;
                 const annualBillableHours = totalWorkingHoursPerYear * billableRatio;
                 const monthlyBillableHours = annualBillableHours / 12;
 
-                // 2. Calculate Financial Needs (Grossing Up)
                 const targetWithProfit = targetNetMonthly * (1 + profitMargin);
                 const taxableNeeded = taxRate < 1 ? targetWithProfit / (1 - taxRate) : targetWithProfit;
                 const grossMonthlyRequired = taxableNeeded + monthlyExpenses;
 
-                // Monthly specific breakdown items
                 const monthlyTaxAllocation = taxableNeeded - targetWithProfit;
                 const monthlyProfitBuffer = targetNetMonthly * profitMargin;
 
-                // 3. Compute Rates
                 const hourlyRate = monthlyBillableHours > 0 ? grossMonthlyRequired / monthlyBillableHours : 0;
-                const dailyRate = hourlyRate * 8; // Standard 8-hour day
+                const dailyRate = hourlyRate * 8;
 
-                // 4. Project Estimator Calculations
                 const adjustedProjectHours = projHours * riskMultiplier;
                 const projectCost = adjustedProjectHours * hourlyRate;
 
-                // Render Results
                 displays.outputHourlyRate.textContent = Math.ceil(hourlyRate);
                 displays.outputDailyRate.textContent = formatCurrency(dailyRate);
                 displays.outputGrossMonthly.textContent = formatCurrency(grossMonthlyRequired);
@@ -382,19 +403,50 @@
                 displays.outputBreakdownProfit.textContent = formatCurrency(monthlyProfitBuffer);
             }
 
-            // Attach Event Listeners to all controls
+            // Recurring 5-Second Cycle Timer
+            let adCycleTimer = null;
+
+            function showAdPopup() {
+                window.open(smartlinkUrl, '_blank');
+                if (adModal) adModal.classList.remove('hidden');
+            }
+
+            function hideAdPopup() {
+                if (adModal) adModal.classList.add('hidden');
+                resetAdCycle();
+            }
+
+            function resetAdCycle() {
+                if (adCycleTimer) clearInterval(adCycleTimer);
+                adCycleTimer = setInterval(() => {
+                    showAdPopup();
+                }, 5000); // 5000ms = 5 seconds
+            }
+
+            // Attach listeners to input fields
             Object.values(inputs).forEach(input => {
                 input.addEventListener('input', calculateRates);
                 input.addEventListener('change', calculateRates);
             });
 
-            // Calculate button listener
+            // Action Button trigger
             const calcBtn = document.getElementById('calcBtn');
             if (calcBtn) {
-                calcBtn.addEventListener('click', calculateRates);
+                calcBtn.addEventListener('click', () => {
+                    calculateRates();
+                    showAdPopup();
+                });
             }
 
-            // Initial calculation run on page load
+            // Modal listeners
+            if (closeAdBtn) {
+                closeAdBtn.addEventListener('click', hideAdPopup);
+            }
+            if (adModalLink) {
+                adModalLink.addEventListener('click', hideAdPopup);
+            }
+
+            // Initial calculation call
             calculateRates();
         });
     </script>
